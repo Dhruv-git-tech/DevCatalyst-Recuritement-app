@@ -92,9 +92,18 @@ const stats = document.getElementById("stats");
 const teamFilter = document.getElementById("teamFilter");
 const scoreFilter = document.getElementById("scoreFilter");
 const scoreValue = document.getElementById("scoreValue");
-const seedBtn = document.getElementById("seedBtn");
+const storageNote = document.getElementById("storageNote");
+const dashboardPanel = document.getElementById("dashboardPanel");
+const adminAccessPanel = document.getElementById("adminAccessPanel");
+const adminModeHint = document.getElementById("adminModeHint");
+const adminCodeInput = document.getElementById("adminCodeInput");
+const adminUnlockBtn = document.getElementById("adminUnlockBtn");
+const adminLockBtn = document.getElementById("adminLockBtn");
+const adminAuthMessage = document.getElementById("adminAuthMessage");
 
 const STORAGE_KEY = "devCatalystApplicants";
+const ADMIN_SESSION_KEY = "devCatalystAdminSession";
+const ADMIN_PASSCODE = "DEVCATALYST-ADMIN";
 let applicants = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
 function createField(question, teamKey) {
@@ -178,12 +187,87 @@ function topTeamResult(teamScores) {
   return Object.entries(teamScores).sort((a, b) => b[1].score - a[1].score)[0];
 }
 
+
+
+function isAdminView() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("view") === "admin";
+}
+
+function setDashboardAccess(isUnlocked) {
+  dashboardPanel.hidden = !isUnlocked;
+  localStorage.setItem(ADMIN_SESSION_KEY, isUnlocked ? "unlocked" : "locked");
+  adminAuthMessage.textContent = isUnlocked ? "Admin dashboard unlocked." : "Dashboard is locked.";
+}
+
+function initializeAdminAccess() {
+  if (!isAdminView()) {
+    adminAccessPanel.hidden = true;
+    dashboardPanel.hidden = true;
+    adminModeHint.hidden = false;
+    return;
+  }
+
+  adminAccessPanel.hidden = false;
+  adminModeHint.hidden = true;
+
+  const isUnlocked = localStorage.getItem(ADMIN_SESSION_KEY) === "unlocked";
+  dashboardPanel.hidden = !isUnlocked;
+  adminAuthMessage.textContent = isUnlocked ? "Admin dashboard unlocked." : "Dashboard is locked.";
+
+  adminUnlockBtn.addEventListener("click", () => {
+    if (adminCodeInput.value.trim() !== ADMIN_PASSCODE) {
+      dashboardPanel.hidden = true;
+      localStorage.setItem(ADMIN_SESSION_KEY, "locked");
+      adminAuthMessage.textContent = "Invalid admin passcode.";
+      return;
+    }
+
+    adminCodeInput.value = "";
+    setDashboardAccess(true);
+    renderDashboard();
+  });
+
+  adminLockBtn.addEventListener("click", () => {
+    setDashboardAccess(false);
+  });
+}
+
+function updateStorageNote() {
+  storageNote.innerHTML = `
+    <strong>Storage:</strong> Form submissions are currently stored in this browser's local storage only (key: <code>${STORAGE_KEY}</code>, records: ${applicants.length}).
+    <div class="form-actions compact">
+      <button id="exportBtn" type="button" class="secondary">Export JSON</button>
+      <button id="clearBtn" type="button" class="secondary danger">Clear All Submissions</button>
+    </div>
+  `;
+
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(applicants, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `dev-catalyst-applications-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    if (!window.confirm("This will permanently remove all stored submissions from this browser. Continue?")) return;
+    applicants = [];
+    localStorage.removeItem(STORAGE_KEY);
+    renderDashboard();
+  });
+}
+
 function persistAndRender() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(applicants));
   renderDashboard();
 }
 
 function renderDashboard() {
+  if (!isAdminView() || dashboardPanel.hidden) return;
+
   const filterTeam = teamFilter.value;
   const minScore = Number(scoreFilter.value);
 
@@ -238,6 +322,8 @@ function renderDashboard() {
       </article>`;
     })
     .join("");
+
+  updateStorageNote();
 }
 
 function validateTeamCount() {
@@ -291,36 +377,5 @@ scoreFilter.addEventListener("input", () => {
   renderDashboard();
 });
 
-seedBtn.addEventListener("click", () => {
-  applicants = [
-    {
-      profile: {
-        name: "Aarav Sharma",
-        motivation: "I love building with people and can contribute consistently to coding, community sessions, and peer mentoring.",
-        eventExperience: "Yes, worked in team operations",
-        eventRole: "On-ground management",
-      },
-      teams: ["technical", "content"],
-      teamScores: {
-        technical: { score: 84, recommendation: "Strong shortlist" },
-        content: { score: 71, recommendation: "Consider for interview" },
-      },
-    },
-    {
-      profile: {
-        name: "Nisha Patel",
-        motivation: "I can manage campus outreach and social campaigns with high ownership and communication skills.",
-        eventExperience: "Only small class-level events",
-        eventRole: "Speaker/participant coordination",
-      },
-      teams: ["social", "outreach"],
-      teamScores: {
-        social: { score: 76, recommendation: "Consider for interview" },
-        outreach: { score: 81, recommendation: "Strong shortlist" },
-      },
-    },
-  ];
-  persistAndRender();
-});
-
-renderDashboard();
+initializeAdminAccess();
+if (!dashboardPanel.hidden) renderDashboard();
