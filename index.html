@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dev Catalyst Recruitment Hub</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Dev Catalyst Recruitment Hub</h1>
+        <p>Structured form intake + ATS style screening for first-year recruitment</p>
+      </div>
+      <div class="chip">2026 Intake</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel form-panel">
+        <h2>Candidate Application Form</h2>
+        <p class="helper">All <strong>Core Profile</strong> and <strong>Event Management</strong> questions are mandatory. Select 1–2 specialist teams.</p>
+
+        <form id="applicationForm">
+          <fieldset>
+            <legend>Core Profile (Mandatory)</legend>
+            <div class="grid two">
+              <label>Full Name
+                <input type="text" name="name" required />
+              </label>
+              <label>Email
+                <input type="email" name="email" required />
+              </label>
+              <label>Phone Number
+                <input type="tel" name="phone" required />
+              </label>
+              <label>Department / Program
+                <input type="text" name="department" required />
+              </label>
+            </div>
+
+            <label>Why do you want to join Dev Catalyst?
+              <textarea name="motivation" rows="3" required></textarea>
+            </label>
+
+            <div class="grid two">
+              <label>How many hours/week can you commit?
+                <select name="commitment" required>
+                  <option value="">Choose</option>
+                  <option>2-4 hours</option>
+                  <option>5-7 hours</option>
+                  <option>8-10 hours</option>
+                  <option>10+ hours</option>
+                </select>
+              </label>
+              <label>How do you handle deadlines?
+                <select name="deadlineStyle" required>
+                  <option value="">Choose</option>
+                  <option>I plan and finish early</option>
+                  <option>I deliver on time with checklists</option>
+                  <option>I need reminders but complete tasks</option>
+                  <option>I struggle and need support</option>
+                </select>
+              </label>
+            </div>
+
+            <label>Tell us about one challenge you overcame and what you learned.
+              <textarea name="challenge" rows="3" required></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Event Planning & Management (Mandatory)</legend>
+            <div class="grid two">
+              <label>Have you organized any event before?
+                <select name="eventExperience" required>
+                  <option value="">Choose</option>
+                  <option>Yes, led the full event</option>
+                  <option>Yes, worked in team operations</option>
+                  <option>Only small class-level events</option>
+                  <option>No, but eager to learn</option>
+                </select>
+              </label>
+              <label>Preferred event role
+                <select name="eventRole" required>
+                  <option value="">Choose</option>
+                  <option>Planning & scheduling</option>
+                  <option>On-ground management</option>
+                  <option>Speaker/participant coordination</option>
+                  <option>Logistics & reporting</option>
+                </select>
+              </label>
+            </div>
+            <label>If an event issue happens last minute, what is your first response?
+              <textarea name="eventCrisis" rows="3" required></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Specialist Teams (Choose 1-2)</legend>
+            <div class="team-choices">
+              <label><input type="checkbox" name="teams" value="technical" /> Technical Team</label>
+              <label><input type="checkbox" name="teams" value="social" /> Social Media Team</label>
+              <label><input type="checkbox" name="teams" value="content" /> Content Creation Team</label>
+              <label><input type="checkbox" name="teams" value="outreach" /> Outreach & Partnerships Team</label>
+              <label><input type="checkbox" name="teams" value="finance" /> Finance & Sponsorship Team</label>
+            </div>
+            <p id="teamChoiceError" class="error-text"></p>
+          </fieldset>
+
+          <div id="dynamicSections"></div>
+
+          <div class="form-actions">
+            <button type="submit">Submit Application</button>
+            <button id="seedBtn" type="button" class="secondary">Load Demo Applicants</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel dashboard-panel">
+        <h2>Recruitment Dashboard</h2>
+        <div class="stats" id="stats"></div>
+
+        <div class="filters">
+          <label>Filter by team
+            <select id="teamFilter">
+              <option value="all">All teams</option>
+              <option value="technical">Technical</option>
+              <option value="social">Social Media</option>
+              <option value="content">Content Creation</option>
+              <option value="outreach">Outreach</option>
+              <option value="finance">Finance</option>
+            </select>
+          </label>
+          <label>Minimum ATS score
+            <input type="range" id="scoreFilter" min="0" max="100" value="0" />
+          </label>
+          <output id="scoreValue">0</output>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Teams</th>
+                <th>Top ATS</th>
+                <th>Recommendation</th>
+              </tr>
+            </thead>
+            <tbody id="applicantRows"></tbody>
+          </table>
+        </div>
+
+        <h3>Individual Screening View</h3>
+        <div id="screeningCards" class="cards"></div>
+      </section>
+    </main>
+
+    <template id="teamSectionTemplate">
+      <fieldset class="team-section">
+        <legend></legend>
+        <div class="team-body"></div>
+      </fieldset>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
