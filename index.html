@@ -111,12 +111,23 @@
 
           <div class="form-actions">
             <button type="submit">Submit Application</button>
-            <button id="seedBtn" type="button" class="secondary">Load Demo Applicants</button>
           </div>
+          <p class="helper" id="adminModeHint">Admin dashboard is not available on applicant mode.</p>
         </form>
       </section>
 
-      <section class="panel dashboard-panel">
+      <section class="panel admin-access-panel" id="adminAccessPanel" hidden>
+        <h2>Admin Access</h2>
+        <p class="helper">Dashboard visibility is restricted to recruitment admins only.</p>
+        <div class="form-actions">
+          <input id="adminCodeInput" type="password" placeholder="Enter admin passcode" />
+          <button id="adminUnlockBtn" type="button">Unlock Dashboard</button>
+          <button id="adminLockBtn" type="button" class="secondary">Lock</button>
+        </div>
+        <p id="adminAuthMessage" class="error-text"></p>
+      </section>
+
+      <section class="panel dashboard-panel" id="dashboardPanel" hidden>
         <h2>Recruitment Dashboard</h2>
         <div class="stats" id="stats"></div>
 
@@ -135,6 +146,14 @@
             <input type="range" id="scoreFilter" min="0" max="100" value="0" />
           </label>
           <output id="scoreValue">0</output>
+        </div>
+
+        <div class="storage-note" id="storageNote">
+          <strong>Storage:</strong> Form submissions are currently stored in this browser's local storage only.
+          <div class="form-actions compact">
+            <button id="exportBtn" type="button" class="secondary">Export JSON</button>
+            <button id="clearBtn" type="button" class="secondary danger">Clear All Submissions</button>
+          </div>
         </div>
 
         <div class="table-wrap">
