@@ -136,3 +136,15 @@ th, td { border-bottom: 1px solid var(--border); padding: 0.55rem; text-align: l
   .layout { grid-template-columns: 1fr; }
   .grid.two, .team-choices, .stats { grid-template-columns: 1fr; }
 }
+
+.storage-note {
+  background: var(--panel-2);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 0.7rem;
+  margin-bottom: 0.8rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.form-actions.compact { margin-top: 0.55rem; }
+button.danger { border-color: #62303a; color: #ffc0ca; }
