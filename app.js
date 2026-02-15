@@ -96,14 +96,16 @@ const storageNote = document.getElementById("storageNote");
 const dashboardPanel = document.getElementById("dashboardPanel");
 const adminAccessPanel = document.getElementById("adminAccessPanel");
 const adminModeHint = document.getElementById("adminModeHint");
-const adminCodeInput = document.getElementById("adminCodeInput");
+const adminUsernameInput = document.getElementById("adminUsernameInput");
+const adminPasswordInput = document.getElementById("adminPasswordInput");
 const adminUnlockBtn = document.getElementById("adminUnlockBtn");
 const adminLockBtn = document.getElementById("adminLockBtn");
 const adminAuthMessage = document.getElementById("adminAuthMessage");
 
 const STORAGE_KEY = "devCatalystApplicants";
 const ADMIN_SESSION_KEY = "devCatalystAdminSession";
-const ADMIN_PASSCODE = "DEVCATALYST-ADMIN";
+const ADMIN_USERNAME = "DHRUV";
+const ADMIN_PASSWORD = "DHRUV2005";
 let applicants = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 
 function createField(question, teamKey) {
@@ -216,14 +218,18 @@ function initializeAdminAccess() {
   adminAuthMessage.textContent = isUnlocked ? "Admin dashboard unlocked." : "Dashboard is locked.";
 
   adminUnlockBtn.addEventListener("click", () => {
-    if (adminCodeInput.value.trim() !== ADMIN_PASSCODE) {
+    const username = adminUsernameInput.value.trim();
+    const password = adminPasswordInput.value;
+
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
       dashboardPanel.hidden = true;
       localStorage.setItem(ADMIN_SESSION_KEY, "locked");
-      adminAuthMessage.textContent = "Invalid admin passcode.";
+      adminAuthMessage.textContent = "Invalid admin credentials.";
       return;
     }
 
-    adminCodeInput.value = "";
+    adminUsernameInput.value = "";
+    adminPasswordInput.value = "";
     setDashboardAccess(true);
     renderDashboard();
   });
